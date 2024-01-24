@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <title>Koala / Create Project</title>
+    <style>
+        .project-creation {
+            display: flex;
+            justify-content: center;
+        }
+
+        #description {
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <main class="container no-color project-creation">
+        <div style="width: 20em;">
+            <h1 class="no-margin" style="padding-bottom: 1rem;">Create Project</h1>
+            <form action="/projects/create_project" method="post">
+                <input type="text" id="name" name="name" placeholder="Name" required>
+                <select name="type" required>
+                    <option value="Flutter">Flutter</option>
+                    <option value="Android" disabled>Android (Disabled)</option>
+                </select>
+                <textarea id="description" name="description" placeholder="Description" maxlength="100" required></textarea>
+                <button type="submit">Create Project</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

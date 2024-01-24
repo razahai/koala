@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <title>Koala / Dashboard</title>
+    <style>
+        .project-list {
+            text-align: center;
+            background-color: #f7f7f7;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .project {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+            border-bottom: 1px solid #a3a098;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .metadata {
+            width: 60%;
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <main class="container no-color">
+        <div class="project-header">
+            <h1 class="no-margin">My Projects</h1>
+            <a role="button" style="padding-right: 1.5rem; padding-left: 1.5rem;" href="/projects/create">+ Create Project</a>
+        </div>
+        <hr>
+        <div class="project-list">
+            <% if (projects.length === 0) { %>
+                <p style="color: darkgrey;">No projects found.</p>
+            <% } else { %>
+                <% for (const project of projects) { %> 
+                    <div class="project">
+                        <div class="metadata">
+                            <h3 class="project-name no-margin"><%= project.name %></h3>
+                            <p class="project-description"><%= project.description %></p>
+                        </div>
+                        <div>
+                            <button style="padding-right: 1.5rem; padding-left: 1.5rem; width: auto;" class="secondary">Delete</button>
+                        </div>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

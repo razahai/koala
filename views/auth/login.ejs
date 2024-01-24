@@ -18,7 +18,7 @@
         <div style="width: 20em;">
             <h1 class="no-margin" style="padding-bottom: 1rem;">Login</h1>
             <% if (messages) { %> 
-                <p class="err"><%= messages %></p>
+                <p class="err"><%= messages[messages.length-1] %></p>
             <% } %>
             <form action="/login" method="post">
                 <input type="text" id="username" name="username" placeholder="Username" required>
