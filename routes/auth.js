@@ -31,15 +31,11 @@ passport.deserializeUser((user, cb) => {
 })
 
 router.get("/login", anonymous, (req, res) => {
-    res.render("auth/login", { messages: req.session.messages });
-})
-
-router.get("/logout", authenticated, (req, res) => {
-    res.render("auth/logout");
+    res.render("auth/login", { messages: req.session.messages, authenticated: req.isAuthenticated() });
 })
 
 router.get("/signup", anonymous, (req, res) => {
-    res.render("auth/signup");
+    res.render("auth/signup", { authenticated: req.isAuthenticated() });
 })
 
 router.post("/login", passport.authenticate("local", {

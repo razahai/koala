@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <title>Koala</title>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <main class="container no-color content">
+        <h1 class="no-margin">Koala</h1>
+        <p>A platform for managing and building mobile applications on the web</p>
+        <hr>
+        <div>
+            <% if (authenticated) { %>  
+                <form action="/logout" method="post">
+                    <input type="submit" name="logout" value="Logout" role="button" style="width: auto; padding-right: 1.5rem; padding-left: 1.5rem;" class="secondary">       
+                </form>
+            <% } else { %>
+                <a href="/login" role="button" style="padding-right: 1.5rem; padding-left: 1.5rem;">Login</a>
+                <a href="/signup" role="button" style="padding-right: 1.5rem; padding-left: 1.5rem;">Signup</a>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>

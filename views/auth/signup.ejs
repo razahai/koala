@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <style>
+        .signup {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <title>Koala / Signup</title>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <main class="container no-color content signup">
+        <div style="width: 20em;">
+            <h1 class="no-margin" style="padding-bottom: 1rem;">Login</h1>
+            <p class="err" id="systemLog"></p>
+            <form id="signupForm" action="/signup" method="post">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="password" id="pwd" name="pwd" placeholder="Password" required>
+                <input type="password" id="confirmPwd" name="confirmPwd" placeholder="Confirm Password" required>
+                <button type="submit">Signup</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        const password = document.getElementById("pwd");
+        const confirmpwd = document.getElementById("confirmPwd");
+        const signupForm = document.getElementById("signupForm");
+        const systemLog = document.getElementById("systemLog");
+
+        function matchPwd(ev) {
+            if (password.value != confirmpwd.value) {
+                systemLog.innerText = "Passwords do not match!";
+                ev.preventDefault();
+            } else {
+                system.innerText = "";
+            }
+        }
+        
+        signupForm.addEventListener("submit", (ev) => {
+            matchPwd(ev);
+        })
+    </script>
+</body>
+</html>

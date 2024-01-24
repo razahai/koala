@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <style>
+        .login {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <title>Koala / Login</title>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <main class="container no-color content login">
+        <div style="width: 20em;">
+            <h1 class="no-margin" style="padding-bottom: 1rem;">Login</h1>
+            <% if (messages) { %> 
+                <p class="err"><%= messages %></p>
+            <% } %>
+            <form action="/login" method="post">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

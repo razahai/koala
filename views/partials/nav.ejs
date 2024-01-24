@@ -1,0 +1,11 @@
+<nav class="container-fluid navbar">
+    <ul>
+        <li><a class="no-margin" href="/"><img src="/img/logo_512x512.png" width="32" height="32"></a></li>
+    </ul>
+    <ul>
+        <% if (authenticated) { %> 
+            <li><a class="link" href="/projects">Projects</a></li>
+        <% } %>
+        <li><a class="link" href="/about">About</a></li>
+    </ul>
+</nav>
