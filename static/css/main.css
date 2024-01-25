@@ -20,7 +20,17 @@ hr {
     background-color: #938f88;
 }
 
+.navbar li {
+    /* remove vertical spacing */
+    padding: var(--nav-element-spacing-horizontal);
+}
+
 .link {
+    color: black;
+    text-decoration: none;
+}
+
+.no-link, .no-link:focus, .no-link:hover {
     color: black;
     text-decoration: none;
 }

@@ -11,14 +11,31 @@ router.get("/", authenticated, async (req, res) => {
 })
 
 router.get("/create", authenticated, (req, res) => {
-    res.render("projects/create_project", { authenticated: req.isAuthenticated() });
+    res.render("projects/create-project", { authenticated: req.isAuthenticated() });
 })
 
-router.post("/create_project", authenticated, async (req, res) => {
+router.post("/create-project", authenticated, async (req, res) => {
     const { name, type, description } = req.body;
     const query = "INSERT INTO projects (user_id, name, type, description) VALUES ($1, $2, $3, $4)";
     await pool.query(query, [req.user.id, name, type, description]);
     res.redirect("/projects");
+})
+
+router.post("/delete-project", authenticated, async (req, res) => {
+    const { id } = req.body;
+    const query = "DELETE FROM projects WHERE id = $1 RETURNING name";
+    const result = await pool.query(query, [id]); 
+    if (!result || result.rows.length === 0) {
+        res.json({
+            success: false,
+            error: `Couldn't delete project $${id}, please contact administrators.`
+        });
+    } else {
+        res.json({
+            success: true,
+            project: result.rows[0]
+        });
+    }
 })
 
 module.exports = {

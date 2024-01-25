@@ -29,33 +29,154 @@
         .metadata {
             width: 60%;
         }
+        
+        .danger {
+            --primary: #ce2d2a;
+            --primary-hover: #d32f2f;
+            --primary-focus: rgba(229, 57, 53, 0.125);
+        }
+
+        .delete {
+            padding: 0.5rem 1.5rem 0.5rem 1.5rem;
+            width: auto;
+        }
+
+        .err {
+            color: red;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <%- include("../partials/nav") -%> 
     <main class="container no-color">
+        <p class="err"></p>
         <div class="project-header">
             <h1 class="no-margin">My Projects</h1>
             <a role="button" style="padding-right: 1.5rem; padding-left: 1.5rem;" href="/projects/create">+ Create Project</a>
         </div>
         <hr>
-        <div class="project-list">
+        <div class="project-list" id="pl">
             <% if (projects.length === 0) { %>
                 <p style="color: darkgrey;">No projects found.</p>
             <% } else { %>
                 <% for (const project of projects) { %> 
-                    <div class="project">
-                        <div class="metadata">
-                            <h3 class="project-name no-margin"><%= project.name %></h3>
-                            <p class="project-description"><%= project.description %></p>
+                    <a href="/projects/project/<%= project.id %>" class="no-margin no-color no-link">
+                        <div class="project">
+                            <div class="metadata">
+                                <h3 class="project-name no-margin"><%= project.name %></h3>
+                                <p class="project-description no-link"><%= project.description %></p>
+                            </div>
+                            <div>
+                                <button id=<%= project.id %> class="dlp delete danger" onclick="openAUS(event)">Delete</button>
+                            </div>
                         </div>
-                        <div>
-                            <button style="padding-right: 1.5rem; padding-left: 1.5rem; width: auto;" class="secondary">Delete</button>
-                        </div>
-                    </div>
+                    </a>
                 <% } %>
             <% } %>
         </div>
+        <dialog id="aus-delete" class="no-margin">
+            <article class="no-margin" style="padding-bottom: 0">
+                <a aria-label="Close" class="close" data-target="aus-delete" onclick="openAUS(event)"></a>
+                <h3 class="no-margin" style="margin-bottom: 1rem;">Delete Project</h3>
+                <p>Are you sure? Remember, this action is irreversible!</p>
+                <footer class="no-margin">
+                    <button role="button" class="secondary" data-target="aus-delete" style="width: auto;" onclick="openAUS(event)">Cancel</button>
+                    <button role="button" class="danger" data-target="aus-delete" style="width: auto;" onclick="deleteProject(event)">Confirm</button>
+                </footer>
+            </article>
+        </dialog>
     </main>
+    <script>
+        const ausModal = document.getElementById("aus-delete");
+        const errorMessage = document.getElementById("err");
+        const projectList = document.getElementById("pl");
+        let preparedDlProject = null;
+        let modalOpened = false;
+
+        async function deleteProject(event) {
+            if (preparedDlProject == null || !preparedDlProject) return;  
+        
+            const id = preparedDlProject.id;
+            const project = {
+                "id": id
+            }
+
+            const response = await fetch("/projects/delete-project", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify(project)
+            });
+            const data = await response.json();
+            if (!data.success) {
+                errorMessage.innerText = data.error;
+                setTimeout(() => {
+                    errorMessage.innerText = "";
+                }, 2500);
+            } else {
+                //                       <button>          <div>     <div class="project">  <a href="/project/#"> 
+                const projectContainer = preparedDlProject.parentElement.parentElement.parentElement; 
+                projectContainer.remove();
+                if (pl.childElementCount == 0) {
+                    const empty = document.createElement("p");
+                    empty.style.color = "darkgrey";
+                    empty.textContent = "No projects found.";
+                    pl.appendChild(empty);
+                }
+            }
+
+            toggleModal();
+        }
+
+        function openAUS(event) {
+            event.preventDefault();
+            if (event.target.classList.contains("dlp")) {
+                preparedDlProject = event.target;    
+            }
+            toggleModal();
+        }
+
+        function toggleModal() {
+            if (ausModal.hasAttribute("open") && ausModal.getAttribute("open") != "false") {
+                document.documentElement.classList.remove("modal-is-open");
+                ausModal.setAttribute("open", false);
+                modalOpened = false;
+                preparedDlProject = null;
+            } else {
+                document.documentElement.classList.add("modal-is-open");
+                ausModal.setAttribute("open", true);
+                setTimeout(() => {
+                    modalOpened = true;
+                }, 500);
+            }
+        }
+
+        document.addEventListener("click", (event) => {
+            if (modalOpened == false) return;
+            if (ausModal.hasAttribute("open") && ausModal.getAttribute("open") != "false") {
+                const cnt = ausModal.querySelector("article");
+                const inside = cnt.contains(event.target);
+                if (!inside) {
+                    document.documentElement.classList.remove("modal-is-open");
+                    ausModal.setAttribute("open", false);
+                    modalOpened = false;
+                    preparedDlProject = null;
+                }
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (modalOpened == false) return;
+            if (event.key === "Escape" && ausModal.hasAttribute("open") && ausModal.getAttribute("open") != "false") {
+                event.preventDefault();
+                document.documentElement.classList.remove("modal-is-open");
+                ausModal.setAttribute("open", false);
+                modalOpened = false;
+                preparedDlProject = null;
+            }
+        });
+    </script>
 </body>
 </html>
