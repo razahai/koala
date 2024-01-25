@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html data-theme="light" lang="en">
+<head>
+    <%- include("../partials/meta"); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@1.5.10/css/pico.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.32.3/src-min-noconflict/ace.min.js"></script>
+    <link href=" https://cdn.jsdelivr.net/npm/ace-builds@1.32.3/css/ace.min.css " rel="stylesheet">
+    <title>Koala / <%= project.name %></title>
+    <style>
+        .safety {
+            --primary: #3d9c42;
+            --primary-hover: #328a36;
+            --primary-focus: rgba(63, 150, 68, 0.125);
+            width: auto;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .editor-container {
+            display: flex;
+            flex: 1;
+            height: 100%;
+        }
+
+        .editor-pad {
+            display: flex;
+            width: 100%;
+        }
+
+        #editor {
+            flex: 7.5;
+        }
+
+        .controller {
+            flex: 2.5;
+            background-color: rgb(39, 66, 66);
+        }
+
+        .viewer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+    <%- include("../partials/nav") -%> 
+    <div class="editor-container">
+        <div class="editor-pad">
+            <div id="editor"></div>
+            <div class="controller">
+                <div class="viewer"></div>
+                <hr style="border-top: 1px solid rgb(26, 24, 24);">
+                <footer class="no-margin" style="display: flex; justify-content: center;">
+                    <button role="button" id="compile" class="safety no-margin">Save & Compile</button>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script>
+        const editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monakai");
+        editor.session.setMode("ace/mode/dart");
+
+        const compileBtn = document.getElementById("compile");
+
+    </script>
+</body>
+</html>

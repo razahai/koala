@@ -23,6 +23,24 @@ router.post("/create-project", authenticated, async (req, res) => {
 
 router.post("/delete-project", authenticated, async (req, res) => {
     const { id } = req.body;
+    let precheckQuery = "SELECT user_id FROM projects WHERE id = $1";
+    let precheckResult = await pool.query(precheckQuery, [id]);
+
+    if (!precheckResult || precheckResult.rows.length === 0) {
+        res.json({
+            success: false,
+            error: `Couldn't find project ${id}, please contact administrators.`
+        });
+    }
+
+    if (precheckResult.rows[0].user_id != req.user.id) {
+        res.json({
+            success: false,
+            error: `You are not the owner of this project.`
+        });
+        return;
+    }
+
     const query = "DELETE FROM projects WHERE id = $1 RETURNING name";
     const result = await pool.query(query, [id]); 
     if (!result || result.rows.length === 0) {
@@ -36,6 +54,24 @@ router.post("/delete-project", authenticated, async (req, res) => {
             project: result.rows[0]
         });
     }
+})
+
+router.get("/project/:id", authenticated, async (req, res) => {
+    const { id } = req.params;
+    const query = "SELECT * FROM projects WHERE id = $1";
+    const result = await pool.query(query, [id]);
+    const project = result.rows[0];
+    
+    if (
+        (!result || result.rows.length === 0) ||
+        (project.user_id != req.user.id)
+    ) {
+        res.redirect("/")
+    }
+    
+    
+
+    res.render("projects/editor", { authenticated: req.isAuthenticated(), project: project })
 })
 
 module.exports = {
