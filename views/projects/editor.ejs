@@ -48,15 +48,20 @@
             align-items: center;
             height: 80%;
         }
+
+        .viewer > #log {
+            color: white;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <%- include("../partials/nav") -%> 
     <div class="editor-container">
         <div class="editor-pad">
-            <div id="editor"></div>
+            <div id="editor"><%= file %></div>
             <div class="controller">
-                <div class="viewer"></div>
+                <div class="viewer"><p id="log"></p></div>
                 <hr style="border-top: 1px solid rgb(26, 24, 24);">
                 <footer class="no-margin" style="display: flex; justify-content: center;">
                     <button role="button" id="compile" class="safety no-margin">Save & Compile</button>
@@ -69,8 +74,58 @@
         editor.setTheme("ace/theme/monakai");
         editor.session.setMode("ace/mode/dart");
 
+        const log = document.getElementById("log");
         const compileBtn = document.getElementById("compile");
+        compileBtn.addEventListener("click", (event) => savenCompile(event));
 
+        async function savenCompile(event) {
+            log.innerText = "Saving...";
+            
+            let response = await fetch("/projects/project/<%= project.id %>/update", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({ "code": editor.getValue() })
+            });
+            let data = await response.json();
+            if (!data.success) {
+                log.innerText = data.error;
+                setTimeout(() => {
+                    log.innerText = "";
+                }, 2500);
+                return;
+            }
+
+            log.innerText = "Compiling...";
+
+            response = await fetch("/projects/project/<%= project.id %>/compile", {
+                "method": "POST"
+            });
+            data = await response.json();
+            if (!data.success) {
+                log.innerText = data.error;
+                setTimeout(() => {
+                    log.innerText = "";
+                }, 2500);
+                return;
+            }
+
+            const { flutterJS, mainDartJS } = data;
+            document.getElementById("flutterJS").innerHTML = flutterJS;
+            document.getElementById("mainDartJS").innerHTML = mainDartJS;
+
+            _flutter.loader.loadEntrypoint({
+                onEntrypointLoaded: async function(engineInitializer) {
+                    let appRunner = await engineInitializer.initializeEngine({
+                        hostElement: document.querySelector("#viewer")
+                    });
+                    await appRunner.runApp();
+                }
+            });
+        }
     </script>
+    <script id="flutterJS"></script>
+    <script id="mainDartJS"></script>
 </body>
 </html>
